@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const socket = io();
+            const form = document.getElementById('chat-form');
+            const input = document.getElementById('message');
+            const messages = document.getElementById('messages');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const message = input.value;
+                socket.send(message);
+                input.value = '';
+            });
+
+            socket.on('message', (msg) => {
+                const item = document.createElement('li');
+                item.textContent = msg;
+                messages.appendChild(item);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Welcome to Flask Chat, {{ session['username'] }}!</h1>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <ul id="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    <form id="chat-form" method="POST" action="javascript:void(0);">
+        <input type="text" id="message" placeholder="Enter your message" required>
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
